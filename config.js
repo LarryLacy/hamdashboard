@@ -108,16 +108,16 @@ const aIMG = [
   ["HF PROPAGATION",
   "https://www.hamqsl.com/solar101vhf.php",
   "https://www.hamqsl.com/solar100sc.php",
-  "https://www.hamqsl.com/solarpich.php"
-  "https://img.propagation.dr2w.de/n-america/10M/dr2w_animation_10M.gif,
-  "https://img.propagation.dr2w.de/n-america/12M/dr2w_animation_12M.gif,
-  "https://img.propagation.dr2w.de/n-america/15M/dr2w_animation_15M.gif,
-  "https://img.propagation.dr2w.de/n-america/17M/dr2w_animation_17M.gif,
-  "https://img.propagation.dr2w.de/n-america/20M/dr2w_animation_20M.gif,
-  "https://img.propagation.dr2w.de/n-america/30M/dr2w_animation_30M.gif,
-  "https://img.propagation.dr2w.de/n-america/40M/dr2w_animation_40M.gif,
-  "https://img.propagation.dr2w.de/n-america/60M/dr2w_animation_60M.gif,
-  "https://img.propagation.dr2w.de/n-america/80M/dr2w_animation_80M.gif,]
+  "https://www.hamqsl.com/solarpich.php",
+  "https://img.propagation.dr2w.de/n-america/10M/dr2w_animation_10M.gif",
+  "https://img.propagation.dr2w.de/n-america/12M/dr2w_animation_12M.gif",
+  "https://img.propagation.dr2w.de/n-america/15M/dr2w_animation_15M.gif",
+  "https://img.propagation.dr2w.de/n-america/17M/dr2w_animation_17M.gif",
+  "https://img.propagation.dr2w.de/n-america/20M/dr2w_animation_20M.gif",
+  "https://img.propagation.dr2w.de/n-america/30M/dr2w_animation_30M.gif",
+  "https://img.propagation.dr2w.de/n-america/40M/dr2w_animation_40M.gif",
+  "https://img.propagation.dr2w.de/n-america/60M/dr2w_animation_60M.gif",
+  "https://img.propagation.dr2w.de/n-america/80M/dr2w_animation_80M.gif",]
 ];
 
 // Image rotation intervals in milliseconds per tile - If the line below is commented, all tiles will be rotated every 30000 milliseconds (30s)
