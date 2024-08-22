@@ -1,0 +1,1189 @@
+﻿<!--This software and generated map is Copyright 2024 by RADIO-TIMETRAVELLER. All rights reserved.-->
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1.0, user-scalable=yes">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Radio Data MW Greyline Map v1.9.1</title>
+<style type="text/css">
+   html {
+      height: 100%;
+   }
+   body {
+      height: 100%;
+      margin: 0px;
+      padding: 0px;
+      font-family: 'Verdana', 'Arial', 'Helvetica', sans-serif;
+      font-size: 11px;
+   }
+   #map_canvas {
+      position: relative;
+      left: 0px;
+      top: 3%;
+      z-index: 1;
+      height: 97%;
+   }
+</style>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAo0wqQ1brXi5lmyolxo2T8yjNSl4iv09U&libraries=geometry"></script>
+<script type="text/javascript">
+
+var safari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent); //check if safari
+var firefox = /^((?!chrome|android).)*firefox/i.test(navigator.userAgent); //check if firefox
+var chrome = /^((?!chrome|android).)*chrome/i.test(navigator.userAgent); //check if firefox
+
+var map;
+var lat2;
+var lon2;
+var first_time = true;
+var ctrlKey = false;
+var shftKey = false;
+var altKey = false;
+var plusKey = 187;
+var minusKey = 189;
+var incr = 1;
+var centerLatLng;
+var PathCoordinates = [];
+var GCirclePlot = [];
+var marker3;
+var distantPointLat;
+var distantPointLon;
+var marker10;
+var marker11;
+var markerSun;
+var SunDeclination;
+var sunHourAngle;
+
+//====================================================================
+//* Nite v1.7
+//* A tiny library to create a night overlay over the map
+//* Author: Rossen Georgiev @ https://github.com/rossengeorgiev
+//* Requires: GMaps API 3
+                                                               
+//Copyright 2013 Rossen Georgiev
+//https://github.com/rossengeorgiev
+
+var nite = {
+    map: null,
+    date: null,
+    sun_position: null,
+    earth_radius_meters: 6378137, //original=6371008 '6378137 is the official google maps earth radius
+    marker_twilight_civil: null,
+    marker_twilight_nautical: null,
+    marker_twilight_astronomical: null,
+    marker_night: null,
+                                                            
+    init: function(map) {
+        if(typeof google === 'undefined'
+           || typeof google.maps === 'undefined') throw 'Nite Overlay: no google.maps detected';
+                                                                
+        this.map = map;
+        this.sun_position = this.calculatePositionOfSun();
+                                
+        //Note: angular diameter of sun is 0.5334 degrees, or 32 minutes of a degree.
+        //Original radius value=0.566666
+        this.marker_twilight_civil = new google.maps.Circle({
+            map: this.map,
+            center: this.getShadowPosition(),
+            radius: this.getShadowRadiusFromAngle(0),
+            fillColor: '#000',
+            fillOpacity: 0.1,
+            strokeOpacity: 0,
+            clickable: false,
+            editable: false
+        });
+        this.marker_twilight_nautical = new google.maps.Circle({
+            map: this.map,
+            center: this.getShadowPosition(),
+            radius: this.getShadowRadiusFromAngle(6),
+            fillColor: '#000',
+            fillOpacity: 0.1,
+            strokeOpacity: 0,
+            clickable: false,
+            editable: false
+        });
+        this.marker_twilight_astronomical = new google.maps.Circle({
+            map: this.map,
+            center: this.getShadowPosition(),
+            radius: this.getShadowRadiusFromAngle(12),
+            fillColor: '#000',
+            fillOpacity: 0.1,
+            strokeOpacity: 0,
+            clickable: false,
+            editable: false
+        });
+        this.marker_night = new google.maps.Circle({
+            map: this.map,
+            center: this.getShadowPosition(),
+            radius: this.getShadowRadiusFromAngle(18),
+            fillColor: '#000',
+            fillOpacity: 0.1,
+            strokeOpacity: 0,
+            clickable: false,
+            editable: false
+        });
+
+    },
+    getShadowRadiusFromAngle: function(angle) {
+        var shadow_radius =  this.earth_radius_meters * Math.PI * 0.5;
+        var twilight_dist = ((this.earth_radius_meters * 2 * Math.PI) / 360) * angle;
+        return shadow_radius - twilight_dist;
+    },
+    getSunPosition: function() {
+        return this.sun_position;
+    },
+    getShadowPosition: function() {
+        return (this.sun_position) ? new google.maps.LatLng(-this.sun_position.lat(), this.sun_position.lng() + 180) : null;
+    },
+    refresh: function() {
+        if(!this.isVisible()) return;
+        this.sun_position = this.calculatePositionOfSun(this.date);
+        var shadow_position = this.getShadowPosition();
+        this.marker_twilight_civil.setCenter(shadow_position);
+        this.marker_twilight_nautical.setCenter(shadow_position);
+        this.marker_twilight_astronomical.setCenter(shadow_position);
+        this.marker_night.setCenter(shadow_position);
+    },
+    jday: function(date) {
+        return (date.getTime() / 86400000.0) + 2440587.5;
+    },
+    calculatePositionOfSun: function(date) {
+        date = (date instanceof Date) ? date : new Date();
+        //alert(date);
+        var rad = 0.017453292519943295;
+                                                                
+        // based on NOAA solar calculations
+        var ms_past_midnight = ((date.getUTCHours() * 60 + date.getUTCMinutes()) * 60 + date.getUTCSeconds()) * 1000 + date.getUTCMilliseconds();
+        var jc = (this.jday(date) - 2451545)/36525;
+        var mean_long_sun = (280.46646+jc*(36000.76983+jc*0.0003032)) % 360;
+        var mean_anom_sun = 357.52911+jc*(35999.05029-0.0001537*jc);
+        var sun_eq = Math.sin(rad*mean_anom_sun)*(1.914602-jc*(0.004817+0.000014*jc))+Math.sin(rad*2*mean_anom_sun)*(0.019993-0.000101*jc)+Math.sin(rad*3*mean_anom_sun)*0.000289;
+        var sun_true_long = mean_long_sun + sun_eq;
+        var sun_app_long = sun_true_long - 0.00569 - 0.00478*Math.sin(rad*125.04-1934.136*jc);
+        var mean_obliq_ecliptic = 23+(26+((21.448-jc*(46.815+jc*(0.00059-jc*0.001813))))/60)/60;
+        var obliq_corr = mean_obliq_ecliptic + 0.00256*Math.cos(rad*125.04-1934.136*jc);
+                                                                
+        var lat = Math.asin(Math.sin(rad*obliq_corr)*Math.sin(rad*sun_app_long)) / rad;                                
+                                
+        var eccent = 0.016708634-jc*(0.000042037+0.0000001267*jc);
+        var y = Math.tan(rad*(obliq_corr/2))*Math.tan(rad*(obliq_corr/2));
+        var rq_of_time = 4*((y*Math.sin(2*rad*mean_long_sun)-2*eccent*Math.sin(rad*mean_anom_sun)+4*eccent*y*Math.sin(rad*mean_anom_sun)*Math.cos(2*rad*mean_long_sun)-0.5*y*y*Math.sin(4*rad*mean_long_sun)-1.25*eccent*eccent*Math.sin(2*rad*mean_anom_sun))/rad);
+        var true_solar_time_in_deg = ((ms_past_midnight+rq_of_time*60000) % 86400000) / 240000;                                
+                                
+        var lng = -((true_solar_time_in_deg < 0) ? true_solar_time_in_deg + 180 : true_solar_time_in_deg - 180);
+                                                                
+        return new google.maps.LatLng(lat, lng);
+
+    },
+    setDate: function(date) {
+        this.date = date;
+        this.refresh();
+    },
+    setMap: function(map) {
+        this.map = map;
+        this.marker_twilight_civil.setMap(this.map);
+        this.marker_twilight_nautical.setMap(this.map);
+        this.marker_twilight_astronomical.setMap(this.map);
+        this.marker_night.setMap(this.map);
+    },
+    show: function() {
+        this.marker_twilight_civil.setVisible(true);
+        this.marker_twilight_nautical.setVisible(true);
+        this.marker_twilight_astronomical.setVisible(true);
+        this.marker_night.setVisible(true);
+        this.refresh();
+    },
+    hide: function() {
+        this.marker_twilight_civil.setVisible(false);
+        this.marker_twilight_nautical.setVisible(false);
+        this.marker_twilight_astronomical.setVisible(false);
+        this.marker_night.setVisible(false);
+    },
+    isVisible: function() {
+        return this.marker_night.getVisible();
+    }
+}
+
+//====================================================================
+
+function calcDistance(fromLat, fromLng, toLat, toLng) {
+   return google.maps.geometry.spherical.computeDistanceBetween(new google.maps.LatLng(fromLat, fromLng), new google.maps.LatLng(toLat, toLng));
+}
+
+function calcHeading(fromLat, fromLng, toLat, toLng) {
+   return google.maps.geometry.spherical.computeHeading(new google.maps.LatLng(fromLat, fromLng), new google.maps.LatLng(toLat, toLng));
+}
+
+function zoomIn() {
+   map.setZoom(13);
+};
+
+function zoomOut() {
+   map.setZoom(2);
+};
+
+function showTrack(code) {
+   if(shftKey == true) { //SHFT key is down. Safari won't work with ctrl key + click
+      if (marker10 && marker11 && code == 1) {
+         var m10lat = marker10.getPosition().lat();
+         var m10lng = marker10.getPosition().lng();
+         var m11lat = marker11.getPosition().lat();
+         var m11lng = marker11.getPosition().lng();
+
+         var PathCoordinates = [
+            new google.maps.LatLng(m10lat, m10lng),
+            new google.maps.LatLng(m11lat, m11lng)
+         ];
+         var i = GCirclePlot.length;
+         GCirclePlot[i] = new google.maps.Polyline({path: PathCoordinates, strokeColor: "#ff0000", strokeOpacity: 0.8, strokeWeight: 1, geodesic: true});
+         GCirclePlot[i].setMap(map);
+      }else if (marker10 && marker11 && code == 2) {
+         var m10lat = marker10.getPosition().lat();
+         var m10lng = marker10.getPosition().lng();
+         var m11lat = marker11.getPosition().lat();
+         var m11lng = marker11.getPosition().lng();
+
+         var D = calcDistance(m10lat, m10lng, m11lat, m11lng);
+         if (D <2) {
+            return false;
+         };
+
+         drawCircumference(m10lat, m10lng, m11lat, m11lng);
+         map.setZoom(2);
+      };
+      return true;
+   };
+
+   if(code == 1) {
+	  centerLatLng = new google.maps.LatLng(map.getCenter().lat(), map.getCenter().lng(), false);
+      var lat3 = centerLatLng.lat();
+      var lon3 = centerLatLng.lng();
+
+      var D = calcDistance(lat2, lon2, lat3, lon3);
+      if (D <2) {
+         return false;
+      };
+
+      var PathCoordinates = [
+         new google.maps.LatLng(lat2, lon2),
+         new google.maps.LatLng(lat3, lon3)
+      ];
+      var i = GCirclePlot.length;
+      GCirclePlot[i] = new google.maps.Polyline({path: PathCoordinates, strokeColor: "#000000", strokeOpacity: 0.8, strokeWeight: 1, geodesic: true});
+      GCirclePlot[i].setMap(map);
+
+   }else{
+
+	  centerLatLng = new google.maps.LatLng(map.getCenter().lat(), map.getCenter().lng(), false);
+      var lat3 = centerLatLng.lat();
+      var lon3 = centerLatLng.lng();
+
+      var D = calcDistance(lat2, lon2, lat3, lon3);
+      if (D <2) {
+         return false;
+      };
+
+      drawCircumference(lat2, lon2, lat3, lon3);
+      map.setZoom(2);
+   };
+
+   //navigator.clipboard.writeText(centerLatLng.lat() + ',' + centerLatLng.lng());
+
+};
+
+function drawCircumference(lat, lon, latx, lonx) {
+    var i;
+    var lat4;
+    var lon4;
+    var lat5;
+    var lon5;
+
+    var heading = calcHeading(lat, lon, latx, lonx);
+    if (heading < 0) {
+       heading = 360 + heading;
+    };
+
+    getLatLonOfDistantPoint(lat, lon, heading, 20000);
+    lat4 = distantPointLat;
+    lon4 = distantPointLon;
+
+      var PathCoordinates = [
+         new google.maps.LatLng(lat, lon),
+         new google.maps.LatLng(lat4, lon4)
+      ];
+      i = GCirclePlot.length;
+      GCirclePlot[i] = new google.maps.Polyline({path: PathCoordinates, strokeColor: "#0000ff", strokeOpacity: 0.8, strokeWeight: 1, geodesic: true});
+      GCirclePlot[i].setMap(map);
+
+    getLatLonOfDistantPoint(lat, lon, heading, 1);
+    lat4 = distantPointLat;
+    lon4 = distantPointLon;
+
+    var headingRev = calcHeading(lat4, lon4, lat, lon);
+    if (headingRev < 0) {
+       headingRev = 360 + headingRev;
+    };
+
+    getLatLonOfDistantPoint(lat4, lon4, headingRev, 20000);
+    lat5 = distantPointLat;
+    lon5 = distantPointLon;
+
+      var PathCoordinates = [
+         new google.maps.LatLng(lat, lon),
+         new google.maps.LatLng(lat5, lon5)
+      ];
+      i = GCirclePlot.length;
+      GCirclePlot[i] = new google.maps.Polyline({path: PathCoordinates, strokeColor: "#0000ff", strokeOpacity: 0.8, strokeWeight: 1, geodesic: true});
+      GCirclePlot[i].setMap(map);
+    
+};
+
+function showDateTime(code, displayDate) { // returns local date-time + GMT offset "Sat Jan 15 2022 18:23:51 GMT+0200"
+      var dateSTR;
+      if (code == 1) {
+      var date = new Date();
+
+      // returns UTC year of the date
+      var yr = date.getUTCFullYear();
+
+      // returns UTC month (0-11)
+      //    0 is January, 11 is December
+      var mo = date.getUTCMonth();
+      mo = mo + 1;
+      if (mo < 10) {
+         var mos = "0" + mo.toString();
+      }else{
+         var mos = mo.toString();
+      };
+
+      // returns UTC day of the month (1-31)
+      var da = date.getUTCDate();
+      if (da < 10) {
+         var das = "0" + da.toString();
+      }else{
+         var das = da.toString();
+      };
+
+      // returns UTC Hour of the date
+      var hh = date.getUTCHours();
+      if (hh < 10) {
+         var hhs = "0" + hh.toString();
+      }else{
+         var hhs = hh.toString();
+      };
+
+      // returns UTC Minutes of the date
+      var mm = date.getUTCMinutes();
+      if (mm < 10) {
+         var mms = "0" + mm.toString();
+      }else{
+         var mms = mm.toString();
+      };
+
+      // returns UTC Seconds of the date
+      //var ss = date.getUTCSeconds();
+      //if (ss < 10) {
+         //var sss = "0" + ss.toString();
+      //}else{
+         //var sss = ss.toString();
+      //};
+
+      dateSTR = 'SHOWING: ' + mos + "/" + das + "/" + yr.toString() + "  " + hhs + ":" + mms;
+      document.getElementById('dateGMT').value = dateSTR;
+
+   }else{
+      
+      var altTime = document.getElementById('clock').value
+      dateSTR = 'SHOWING: ' + displayDate + "  " + altTime;
+      document.getElementById('dateGMT').value = dateSTR;
+
+   };
+}
+
+function getRadians(anglepass) {
+    return (anglepass * Math.PI) / 180;
+}
+
+function getDegrees(radianspass) {
+    return (radianspass * 180) / Math.PI;
+}
+
+function getSunriseSunsetTimeInGMT(rise, lat, lon, datepass) {
+
+//Source:
+//   Almanac for Computers, 1990
+//   published by Nautical Almanac Office
+//   United States Naval Observatory
+//   Washington, DC 20392
+
+//Inputs:
+//   day, month, year:      date of sunrise/sunset
+//   latitude, longitude:   location for sunrise/sunset
+//   zenith:                sun's zenith for sunrise/sunset
+//     offical      = 90 degrees 50' 90.83333333
+//     civil        = 96 degrees (sun is 6 degrees below the horizon)
+//     nautical     = 102 degrees (sun is 12 degrees below the horizon)
+//     astronomical = 108 degrees (sun is 18 degrees below the horizon)
+
+//   NOTE: longitude is positive for East and negative for West
+//       NOTE: the algorithm assumes the use of a calculator with the
+//       trig functions in "degree" (rather than "radian") mode. Most
+//       programming languages assume radian arguments, requiring back
+//       and forth convertions. The factor is 180/pi. So, for instance,
+//       the equation RA = atan(0.91764 * tan(L)) would be coded as RA
+//       = (180/pi)*atan(0.91764 * tan((pi/180)*L)) to give a degree
+//       answer with a degree input for L.
+
+//asin: Atn(x / Sqr(-x * x + 1))
+//acos: Atn(-x / Sqr(-x * x + 1)) + 2 * Atn(1)
+
+//rise=1 sunrise
+//rise=0 sunset
+
+//1. first calculate the day of the year
+
+   var n;
+   var N1;
+   var N2;
+   var N3;
+
+   var lngHour;
+   var m;
+   var l;
+   var RA;
+   var Lquadrant;
+   var RAquadrant;
+   var sinDec;
+   var cosDec;
+   var cosH;
+   var H;
+   var UT;
+   var zenith;
+   var t;
+
+   //var date = new Date();
+   var date = datepass;
+   var yr = date.getUTCFullYear();
+   var mo = date.getUTCMonth(); //0-11
+   mo = mo + 1;
+   var da = date.getUTCDate();
+   var hh = date.getUTCHours();
+   var mm = date.getUTCMinutes();
+   var ss = date.getUTCSeconds();
+
+            N1 = Math.floor(275 * mo / 9); 
+            N2 = Math.floor((mo + 9) / 12);
+            N3 = (1 + Math.floor((yr - 4 * Math.floor(yr / 4) + 2) / 3));
+            n = N1 - (N2 * N3) + da - 30;
+            n = n + ((hh * 3600 + mm * 60 + ss) / 86400);  //get time offset into this day
+          
+    zenith = 90.0; //official SR/SS is 90 degrees 50, or 90.83333333. NOAA is closer to 90.97
+   
+//2. convert the longitude to hour value and calculate an approximate time
+
+    lngHour = lon / 15;
+    
+    //If rising time is desired:
+    if (rise == 1) {
+        t = n + ((6 - lngHour) / 24);
+    //If setting time is desired:
+    }else{
+        t = n + ((18 - lngHour) / 24);
+    };
+
+//3. calculate the Sun's mean anomaly
+
+    m = (0.985626283367556 * t) - 3.289 //.98564787182197 = 360/365.242;
+
+//4. calculate the Sun's true longitude
+
+    l = m + (1.916 * Math.sin(getRadians(m))) + (0.02 * Math.sin(getRadians(2 * m))) + 282.634;
+
+    if (l >= 360) {l = l - 360};
+    if (l < 0) {l = l + 360};
+    //NOTE: L potentially needs to be adjusted into the range [0,360] by adding/subtracting 360
+
+    RA = Math.atan(0.91764 * Math.tan(getRadians(l)));
+    RA = getDegrees(RA);
+    if (RA >= 360) {RA = RA - 360};
+    if (RA < 0) {RA = RA + 360};
+    //NOTE: RA potentially needs to be adjusted into the range [0,360] by adding/subtracting 360
+
+    Lquadrant = (Math.floor(l / 90)) * 90;
+    RAquadrant = (Math.floor(RA / 90)) * 90;
+    RA = RA + (Lquadrant - RAquadrant);
+
+//5c. right ascension value needs to be converted into hours
+
+    RA = RA / 15;
+
+    var ASIN;
+    sinDec = 0.39782 * Math.sin(getRadians(l));
+    //cosDec = Math.cos(asin(sinDec));
+    ASIN = Math.atan(sinDec / Math.sqrt(-sinDec * sinDec + 1));
+    cosDec = Math.cos(ASIN);
+    if (cosDec == 1) {cosDec = 0.99999999}; //correct for possible error, below
+    if (cosDec == 0) {cosDec = 0.00000001}; //correct for possible error, below
+    //The following gives a division by 0 error on September 23. cosDec = 1 at that time. SunDeclination would be = 0 degrees.
+    //What happens: Math.sqrt(-cosDec * cosDec + 1) = Math.sqrt(-1 * 1 + 1) = 0
+    //Always returns positive number:
+    //SunDeclination = getDegrees(Math.atan(-cosDec / Math.sqrt(-cosDec * cosDec + 1)) + 2 * Math.atan(1))
+    //Correct sign returned:
+    SunDeclination = getDegrees(sinDec) //orig calculation
+    
+    //Most accurate except for Module2 calculation.
+    //SunDeclination = getDegrees(ASIN(SINi(-23.44) * COSi((360 / 365.242) * (n + 10) + (360 / 3.14159265358979) * 0.016709 * SINi((360 / 365.242) * n - 2)))) //~sun declination
+
+//7a. calculate the Sun's local hour angle
+
+    cosH = (Math.cos(getRadians(zenith)) - (sinDec * Math.sin(getRadians(lat)))) / (cosDec * Math.cos(getRadians(lat)));
+
+    //if (cosH >  1)
+      //the sun never rises on this location (on the specified date)
+    //if (cosH < -1)
+      //the sun never sets on this location (on the specified date)
+
+//7b. finish calculating H and convert into hours
+
+    if (cosH >= 1) {
+        return "24hr night"; //this value is tested - do not change content or text case
+    };
+    if (cosH <= -1) {
+        return "24hr light"; //this value is tested - do not change content or text case
+    };
+    
+    //If rising time is desired:
+        //H = 360 - acos(cosH)
+    //If setting time is desired:
+        //H = acos(cosH)
+    var ACOS;
+    if (rise == 1) {
+        //sunrise
+        ACOS = Math.atan(-cosH / Math.sqrt(-cosH * cosH + 1)) + 2 * Math.atan(1);
+        ACOS = getDegrees(ACOS);
+        H = 360 - ACOS;
+    }else{
+        //sunset
+        ACOS = Math.atan(-cosH / Math.sqrt(-cosH * cosH + 1)) + 2 * Math.atan(1);
+        H = getDegrees(ACOS);
+    };
+    
+    H = H / 15;
+    sunHourAngle = H;
+
+//8. calculate local mean time of rising/setting
+    
+    t = H + RA - (0.06571 * t) - 6.622;
+
+//9. adjust back to UTC
+    
+    UT = t - lngHour;
+
+    //NOTE: UT potentially needs to be adjusted into the range [0,24] by adding/subtracting 24
+    if (UT >= 24) {UT = UT - 24};
+    if (UT < 0) {UT = UT + 24};
+    
+//10. convert UT value to hours, minutes, and seconds
+
+    var hrx;
+    var mnx;
+    var snx;
+    var mnxRounded;
+    var timecode;
+    
+    //Time is in decimal UTC, i.e., 15.5867432
+    
+    timecode = UT * 3600; //make it like system timer, in seconds
+
+    hrx = Math.floor(timecode / 3600);
+    mnx = timecode - (hrx * 3600);
+    mnxRounded = Math.round(mnx / 60);
+    mnx = Math.floor(mnx / 60);
+    snx = Math.floor(timecode - (hrx * 3600) - (mnx * 60));
+    
+    srss_total_snx = UT * 3600;
+
+    if (hrx < 10) {
+       srss_hrx = "0" + hrx.toString();
+    }else{
+       srss_hrx = hrx.toString();
+    };
+
+    if (mnx < 10) {
+       srss_mnx = "0" + mnx.toString();
+    }else{
+       srss_mnx = mnx.toString();
+    };
+
+    if (snx < 10) {
+       srss_snx = "0" + snx.toString();
+    }else{
+       srss_snx = snx.toString();
+    };
+
+    var sun_position = nite.getSunPosition();
+    markerSun.setPosition(sun_position);
+    
+    return srss_hrx + ":" + srss_mnx + ":" + srss_snx;
+}
+
+function clearTrack() {
+   var i = GCirclePlot.length;
+   for (i; i > -1; i--) {
+      if (GCirclePlot[i]) {
+         GCirclePlot[i].setMap(null); //remove track line
+      };
+   };
+}
+
+function initscript() {
+   if(first_time == true) { //window onload event --- creating initial window
+      first_time = false;
+      var v = localStorage.getItem('RDMWlatGL');
+      if(v == null) {
+         document.getElementById('homelat').value = "39.83333";
+         var lat1 = "39.83333";
+         localStorage.setItem('RDMWlatGL',lat1);
+      }else{
+         document.getElementById('homelat').value = v;
+      };
+      v = localStorage.getItem('RDMWlonGL');
+      if(v == null) {
+         document.getElementById('homelon').value = "-98.58333";
+         var lon1 = "-98.58333";
+         localStorage.setItem('RDMWlonGL',lon1);
+      }else{
+         document.getElementById('homelon').value = v;
+      };
+
+      var date = new Date();
+      var yr = date.getUTCFullYear();
+      var mo = date.getUTCMonth(); //0-11
+      mo = mo + 1;
+      if (mo < 10) {
+         var mos = "0" + mo.toString();
+      }else{
+         var mos = mo.toString();
+      };
+      var da = date.getUTCDate();
+      if (da < 10) {
+         var das = "0" + da.toString();
+      }else{
+         var das = da.toString();
+      };
+      const dateControl = document.querySelector('input[name="cDate"]');
+      dateControl.value = yr.toString() + '-' + mos + '-' + das;
+      //Note: dateControl.value stored as = '2017-06-01';
+      //console.log(dateControl.value); // prints "2017-06-01"
+
+      var hh = date.getUTCHours();
+      var mm = date.getUTCMinutes();
+      const inputControl = document.querySelector('input[name="cTime2"]');
+      inputControl.value = hh * 60 + mm;
+      sliderAltTime();
+
+   }else{
+
+      //Continue.
+      
+   };
+
+   var lat_element = document.getElementById("homelat");
+   var lon_element = document.getElementById("homelon");
+   lat2 = parseFloat(lat_element.value.substring(0, 9));
+   lon2 = parseFloat(lon_element.value.substring(0, 10));
+
+   if(map != null) {
+      centerLatLng = map.getCenter();
+   }else{
+      centerLatLng = {lat: lat2, lng: lon2};
+   };
+
+   if(map != null) {
+      newZoom = map.getZoom();
+   }else{
+      newZoom = 2;
+   };
+
+   var myOptions = {
+      zoom: newZoom,
+      center: centerLatLng,
+      mapTypeControl: true,
+      fullscreenControl: false,
+      zoomControl: true,
+      streetViewControl: true,
+      scaleControl: true,
+      draggableCursor: 'default',
+      clickEvents: true,
+      mouseEvents: true,
+      keyboardShortcuts: true,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+   };
+
+   map = null;
+   map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+
+   nite.init(map);
+
+   google.maps.event.addDomListener(document, 'keydown', function (e) {
+      var code = (e.keyCode ? e.keyCode : e.which);
+      if (code == 17) {
+         ctrlKey = true;
+      };
+	  if (code == 16) {
+         shftKey = true;
+      };
+	  if (code == 18) {
+         altKey = true;
+      };
+   });
+
+   google.maps.event.addDomListener(document, 'keyup', function (e) {
+      var code = (e.keyCode ? e.keyCode : e.which);
+      if (code == 17) {
+         ctrlKey = false;
+      };
+	  if (code == 16) {
+         shftKey = false;
+      };
+	  if (code == 18) {
+         altKey = false;
+      };
+      //alert(code);
+   });
+
+   map.addListener('click', (e) => {
+      if(ctrlKey == true) { //CTRL key is down
+         var newLat = e.latLng.lat();
+         newLat = newLat.toFixed(5);
+         var newLon = e.latLng.lng();
+         newLon = newLon.toFixed(5);
+         document.getElementById('homelat').value = newLat;
+         document.getElementById('homelon').value = newLon;
+         setLatLon();
+      }else{
+      //CTRL key is up.
+      };
+   });
+
+   //NEW HOME MARKER.
+   marker3 = new google.maps.Marker({
+      position: new google.maps.LatLng(lat2, lon2),
+      icon: {
+         size: new google.maps.Size(35,35),
+         scaledSize: new google.maps.Size(30,35),
+         origin: new google.maps.Point(0,0),
+         url: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACMAAAAjCAYAAAAe2bNZAAAAB3RJTUUH5ggSCCYQFtNEEgAAAAlwSFlzAAAO2AAADtgBB0iRpgAAAARnQU1BAACxjwv8YQUAAAUrSURBVHjaxZd7TFtVHMd/bYGyjscetTyKttJuGAYoWnlsGVsbBRYSGZPI2OI2BJyAf6gzZovJQgxmExn7Z27TraJOE4wbbIuEgQQGZEwoD3kIqCCU0QJSx7OFtrT1/q6ZGdm95d52id+kOTnn9/t97vee3nvuORyHwwFsZDKZ+DXVt1IaGupT+nr7FLrxcanNZhPweDyTOCRkNCIyol2pVFUl7UmuEggEZjZsDlMzZrOZp750KV99WX182cwJDpHsgicCosDHTwwenutgxboEi/M6mJ7qgXFtI3jzHfrsnOzT2bm55/l8vu2xmRkaGpK+nZdXrtPPxUYp3gKpLBG4PE/afLvNCqPDtdDTfhHEwf6t5y5c2C+Xy0fdNtPV2RWRnZVV679JERSbcAI8vXwYT7vVsgitTadg7n77hLqsLDH6+eg+l81otdrg9LS0NmGgSvzC9mPA4XAZG3kgh8MOHS1nwDBZr7taWRkjkUj0rM3Y7XZOetq+OsOMryohsdglIw8baqr9AIQbF+qvVla8xOVyKS9Ke4Xvy8szBgdHVLEJH7plhLxjoh45yEMuq5khZgWUCbt6hMGpkeHPvu6WkYfV330FDPobvQ1NjVHE7DCbGU2bRjGhn4qQhaU6hU/pO6Cl/iT8dDOXbLHvTMhDrkajUVDFKc00NzUmiYKiOXxvP1rwQPe30FjzLgiFfvBiXArZYh/H6YQ85DY3NiZRxT0op7O//7nNom200Nn7w+QacjD7M3haFvPfeHjUy/CdugCCnoyHDZtklLXIRT7jmTFMT4cIfAJpzYz9WQehW+JWGUFhP3RLLBmnE3IN04YQxmZMRhOfx/OiBZqXZ8F/A7VZHMc4nZBrMhr5jM2IAgImlox/0QL9N4bC2Egn+dY9LOyPjXSRcTohF/mMzURGRWqmp3ppgVJ5MiwszEHNj5/CyoqFHMMW+ziOcTohF/lUMcoHWKlSVX/15ZWTVouR4+m1/pG4F98XdieXQnPdCfi1uwY2CyXwt0ELHO46YvwsGacSwYMpncahVOVXU8UpFz1if8LZGb/9d2lYjlz2zCu0d2mzWWBSpwHjwgSs9w2CQHEM8UzQf82HB2/C6G+Xh5rvtmwl9j+PXJjyb8LEjMzMz//ovwbOPqT4MIqf2gFbt6WTrTMjyEEecqmM0JpBZR48oDYtji5M6trgcQg5yEMuXQ6tGZFINPPa/ozzfZ1qYLs1pZoV5CAPuazNoI7m5Z2Znxmc199rccsM1iMHec7ynJoJDAycPnTkSMkvreeINWTFJSNYh/XIQZ7LZlD5BfmlHty5e0MDlS6ZwTqsR85auWua8fP3N75z7L3jve1fwPLSzFrpq4T5WIf1yFkrn9HpAJf5V/em1c+bgpTxuwuJnRtnzRrk3r1dCH6CiYZr1ytVVJsp1jNDJhGgj4qKCsZH6syT462MZgXzMB/rmBhhbAZFfE8GDmdlndLcKSYPbM6EcczDfKxjeg3GJ0oUcbT1Skne0+7tExOp2PE+bV77nRJYXmzrrbpVrSCOuBamfFbbfgSfLv4ka2igworfJCrhOMYxj40R1mZQsXFxHcQZuqi16WOwmBdXxbCP4xjHPLZsVn/TA5nNZo99qXubl62SuHjlv28X+fY0FIK3p/bnihvXdxKHfdarpEunM7xQydnSQxPjtxe0wzXkGLbYx3FXjJDCO3L193VZ2eEwebj9jaOVDmyx7w7PLTO4GL6Zk/ONTCJ1YIv9/80M/mZnZn0OZGT8gK27rH8AGoKKm93b2mgAAAAASUVORK5CYII=",
+         anchor: new google.maps.Point(15,35)},
+      title: 'HOME ' + lat2 + ' ' + lon2,
+      zIndex: 2,
+      map: map
+   });
+
+   //OLD HOME MARKER.
+   //var marker = new google.maps.Marker({
+      //position: new google.maps.LatLng(lat2, lon2),
+      //title: 'HOME ' + lat2 + ' ' + lon2,
+      //zIndex: 2,
+      //map: map,
+   //});
+
+   //MAP'S CENTER MARKER.
+   var marker2 = new google.maps.Marker({
+      position: new google.maps.LatLng(lat2, lon2),
+      title: "",
+      zIndex: 6,
+      map: map,
+   });
+
+   //SUN MARKER.
+   markerSun = new google.maps.Marker({
+      position: new google.maps.LatLng(lat2, lon2), //position will change
+      icon: {
+         size: new google.maps.Size(13,13),
+         scaledSize: new google.maps.Size(14,14),
+         origin: new google.maps.Point(0,0),
+         url: "data:image/gif;base64,R0lGODlhDQANAPcAAAAAAICAAP//APi/JAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAAMALAAAAAANAA0AAAhCAAcIHBhgoMEBBREKSJhQYYCHCyE2hCigYkSDASxqnJhRY8WHCj16LEhx5ESRCzF2tAhSYMaHLyUSdJkS4cGZBwMCADs=",
+         anchor: new google.maps.Point(7,7)},
+      title: '',
+      zIndex: 2,
+      map: map
+   });
+
+   //Updates SR-SS display when map movement occurs, according to proper date/time.
+   map.addListener("center_changed", () => {
+      // 50 milliseconds after the center of the map has changed, move center marker
+      window.setTimeout(() => {
+         //centerLatLng = map.getCenter();
+		 //use this instead to avoid lon > 180 or < -180
+		 centerLatLng = new google.maps.LatLng(map.getCenter().lat(), map.getCenter().lng(), false);
+         var lat3 = centerLatLng.lat();
+         var lon3 = centerLatLng.lng();
+
+         marker2.setPosition(new google.maps.LatLng(lat3, lon3));
+
+         var distKM = calcDistance(lat2, lon2, lat3, lon3);
+         var dist1 = distKM / 1000;
+         var dist2 = dist1 * 0.62137119;
+         dist1 = dist1.toFixed(1);
+         dist2 = dist2.toFixed(1);
+
+         var heading = calcHeading(lat2, lon2, lat3, lon3);
+         if (heading < 0) {
+            heading = 360 + heading;
+         };
+         heading = heading.toFixed(1);
+
+         var headingRev = calcHeading(lat3, lon3, lat2, lon2);
+         if (headingRev < 0) {
+            headingRev = 360 + headingRev;
+         };
+         headingRev = headingRev.toFixed(1);
+
+         var headingSR;
+         var headingSS;
+         var dateSTR;
+
+         const checkboxControl = document.querySelector('input[name="accept"]');
+         if (checkboxControl.checked) {
+            const dateControl = document.querySelector('input[name="cDate"]');
+            dateSTR = dateControl.value;
+            const clockControl = document.querySelector('input[name="clock"]');
+            //alert(dateSTR + 'T' + clockControl.value + ':00Z');
+            var altDate = new Date(dateSTR + 'T' + clockControl.value + ':00Z'); //for UTC time
+            headingSR = getSunriseSunsetTimeInGMT(1, lat3, lon3, altDate);
+            headingSS = getSunriseSunsetTimeInGMT(0, lat3, lon3, altDate);
+//document.getElementById('test').value = altDate;
+         }else{
+            var datepass = new Date();
+            headingSR = getSunriseSunsetTimeInGMT(1, lat3, lon3, datepass);
+            headingSS = getSunriseSunsetTimeInGMT(0, lat3, lon3, datepass);
+//document.getElementById('test').value = datepass;
+         };
+
+         if (headingSR == '24hr light') {
+            dateSTR = '24hr light';
+         }else if(headingSS == '24hr light') {
+            dateSTR = '24hr light';
+         }else if(headingSR == '24hr night') {
+            dateSTR = '24hr night';
+         }else if(headingSS == '24hr night') {
+            dateSTR = '24hr night';
+         }else{
+            dateSTR = 'SR=' + headingSR + '  SS=' + headingSS;
+         }
+         document.getElementById('dateSRSS').value = dateSTR;
+
+         document.getElementById('homelat').value = lat3.toFixed(5);
+         document.getElementById('homelon').value = lon3.toFixed(5);
+
+         marker2.setTitle(lat3.toFixed(5) + '  ' + lon3.toFixed(5) + '  ' + dist1 + 'km  ' + dist2 + 'mi  ' + heading + '°  ' + headingRev + '°');
+         
+      }, 50);
+   });
+
+   update(); //will kick off showDateTime(1, "") and google.maps.event.trigger(map, "center_changed")
+
+   setTimeout(repeatingFunc, 60000);
+
+};
+
+function repeatingFunc() {
+   //console.log("It's been 60 seconds. Execute the function again.");
+   setTimeout(repeatingFunc, 60000);
+
+   const checkboxControl = document.querySelector('input[name="accept"]');
+   const autoControl = document.querySelector('input[name="auto"]');
+   if (autoControl.checked && !checkboxControl.checked) {
+      update();
+      //console.log("Auto update done.");
+   };
+};
+
+function setLatLon() {
+   lat2 = document.getElementById('homelat').value;
+   lon2 = document.getElementById('homelon').value;
+   localStorage.setItem('RDMWlatGL',lat2);
+   localStorage.setItem('RDMWlonGL',lon2);
+   marker3.setPosition(new google.maps.LatLng(lat2, lon2));
+   marker3.setTitle('HOME ' + lat2 + '  ' + lon2);
+   moveToLocation(lat2, lon2);
+};
+
+function moveToLocation(lat1, lon1) {
+   map.panTo(new google.maps.LatLng(lat1, lon1));
+   return false; //this will cancel your navigation
+};
+
+function goHome() {
+   var v;
+   var lat1;
+   var lon1;
+   v = localStorage.getItem('RDMWlatGL');
+   if(v == null) {
+      document.getElementById('homelat').value = "39.83333";
+      setLatLon();
+   }else{
+      lat1 = v;
+   };
+
+   v = localStorage.getItem('RDMWlonGL');
+   if(v == null) {
+      document.getElementById('homelon').value = "-98.58333";
+      setLatLon();
+   }else{
+      lon1 = v;
+   };
+
+   moveToLocation(lat1, lon1);
+   map.setZoom(3);
+};
+
+function update() {
+   const checkboxControl = document.querySelector('input[name="accept"]');
+   if (checkboxControl.checked) {
+      //var date = new Date("2022-12-21T12:09:36Z"); //for UTC time
+      const dateControl = document.querySelector('input[name="cDate"]');
+      var dateSTR = dateControl.value;
+      const clockControl = document.querySelector('input[name="clock"]');
+      //alert(dateSTR + 'T' + clockControl.value + ':00Z');
+      var date = new Date(dateSTR + 'T' + clockControl.value + ':00Z'); //for UTC time
+      nite.setDate(date);
+      showDateTime(2, dateSTR); //show alt date/time
+      google.maps.event.trigger(map, "center_changed");
+   }else{
+      var date = new Date();
+      nite.setDate(date);
+      showDateTime(1, ""); //show current date/time
+      google.maps.event.trigger(map, "center_changed");
+   };
+};
+
+function checkAltDate() {
+   const checkboxControl = document.querySelector('input[name="accept"]');
+   if (checkboxControl.checked) {
+      update();
+   };
+};
+
+function sliderAltTime() {
+   const timeControl = document.querySelector('input[name="cTime2"]');
+   var hh = Math.floor(timeControl.value / 60);
+   var mm = timeControl.value - hh * 60;
+   const timeDisplay = document.querySelector('input[name="clock"]');
+
+   if (hh < 10) {
+      hhs = "0" + hh.toString();
+   }else{
+      hhs = hh.toString();
+   };
+
+   if (mm < 10) {
+      mms = "0" + mm.toString();
+   }else{
+      mms = mm.toString();
+   };
+
+   timeDisplay.value = hhs + ':' + mms
+
+   const checkboxControl = document.querySelector('input[name="accept"]');
+   if (checkboxControl.checked) {
+      update();
+   };
+};
+
+function addOne() {
+   var v = parseFloat(document.getElementById('cTime2').value);
+   v = v + 1;
+   if (v > 1439) {
+    v = 1439;
+   };
+   document.getElementById('cTime2').value = v.toFixed();
+   sliderAltTime();
+};
+
+function subOne() {
+   var v = parseFloat(document.getElementById('cTime2').value);
+   v = v - 1;
+   if (v < 0) {
+      v = 0;
+   };
+   document.getElementById('cTime2').value = v.toFixed();
+   sliderAltTime();
+};
+
+function checkDate() {
+   //const dateControl = document.querySelector('input[name="cDate"]');
+   //Note: dateControl.value stored as = '2017-06-01';
+   //console.log(dateControl.value); // prints "2017-06-01"
+   //alert(dateControl.valueAsNumber); //returns julian date
+};
+
+function altTimeCheckboxClicked() {
+   const checkboxControl = document.querySelector('input[name="accept"]');
+   const autoControl = document.querySelector('input[name="auto"]');
+   if (checkboxControl.checked) {
+      autoControl.checked = false;
+      autoControl.disabled = true;
+   }else{
+      autoControl.disabled = false;
+   };
+   update();
+};
+
+function getLatLonOfDistantPoint(lat, lon, brng, dist) {
+    var rlat1;
+    var rlon1;
+    var rlat2;
+    var rlon2;
+    var rbrng;
+    rlat1 = getRadians(lat);
+    rlon1 = getRadians(lon);
+    rbrng = getRadians(brng);
+    var R = 6378.137; //radius of earth in km
+    var d = dist;
+    rlat2 = Math.asin(Math.sin(rlat1)*Math.cos(d/R)+Math.cos(rlat1)*Math.sin(d/R)*Math.cos(rbrng));
+    rlon2 = rlon1+Math.atan2(Math.sin(rbrng)*Math.sin(d/R)*Math.cos(rlat1),Math.cos(d/R)-Math.sin(rlat1)*Math.sin(rlat2));
+
+    rlon2=getDegrees(rlon2);
+    rlon2 = (rlon2+540)%360-180;
+
+    distantPointLat = getDegrees(rlat2);
+    distantPointLon = rlon2;          
+};
+
+function ASIN(sinpass) {
+    if (sinpass >= 1) {
+       sinpass = 0.999999999999;
+    };
+    if (sinpass <= -1) {
+       sinpass = 0.999999999999;
+    };
+    return Math.atan(sinpass / Math.sqrt(-sinpass * sinpass + 1));
+    
+    //NOTE!!! ANSWER IS IN RADIANS!!!
+    
+    //Arcsin(X) = Atn(X / Sqr(-X * X + 1))
+};
+
+function toggleM1() {
+   if(shftKey == true) { //SHFT key is down
+      if (marker10) {
+         var m10lat = marker10.getPosition().lat();
+         var m10lng = marker10.getPosition().lng();
+         moveToLocation(m10lat, m10lng);
+      };
+      return true;
+   };
+   if (marker10) {
+      google.maps.event.removeListener(marker10_listener);
+      marker10.setMap(null); //removes marker
+      marker10 = null;
+      //marker10.setPosition(new google.maps.LatLng(lat3, lon3));
+   }else{
+	  centerLatLng = new google.maps.LatLng(map.getCenter().lat(), map.getCenter().lng(), false);
+      var lat3 = centerLatLng.lat();
+      var lon3 = centerLatLng.lng();
+      
+      marker10 = new google.maps.Marker({
+      position: new google.maps.LatLng(lat3, lon3),
+      icon: {
+         size: new google.maps.Size(34,49),
+         scaledSize: new google.maps.Size(19,35),
+         origin: new google.maps.Point(0,0),
+         url: "data:image/png;base64,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",
+         anchor: new google.maps.Point(10,35)},
+      draggable: true,
+      title: 'M1 ' + lat3.toFixed(5) + ' ' + lon3.toFixed(5),
+      zIndex: 4,
+      map: map
+      });
+      marker10_listener = google.maps.event.addListener(marker10, 'dragend', function() {
+         var m10lat = marker10.getPosition().lat();
+         var m10lng = marker10.getPosition().lng();
+         marker10.setTitle(m10lat.toFixed(5) + '  ' + m10lng.toFixed(5));
+      });
+   };
+};
+
+function toggleM2() {
+   if(shftKey == true) { //SHFT key is down
+      if (marker11) {
+         var m11lat = marker11.getPosition().lat();
+         var m11lng = marker11.getPosition().lng();
+         moveToLocation(m11lat, m11lng);
+      };
+      return true;
+   };
+   if (marker11) {
+      google.maps.event.removeListener(marker11_listener);
+      marker11.setMap(null); //removes marker
+      marker11 = null;
+      //marker11.setPosition(new google.maps.LatLng(lat3, lon3));
+   }else{
+	  centerLatLng = new google.maps.LatLng(map.getCenter().lat(), map.getCenter().lng(), false);
+      var lat3 = centerLatLng.lat();
+      var lon3 = centerLatLng.lng();
+      
+      marker11 = new google.maps.Marker({
+      position: new google.maps.LatLng(lat3, lon3),
+      icon: {
+         size: new google.maps.Size(34,49),
+         scaledSize: new google.maps.Size(19,35),
+         origin: new google.maps.Point(0,0),
+         url: "data:image/png;base64,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",
+         anchor: new google.maps.Point(10,35)},
+      draggable: true,
+      title: 'M2 ' + lat3.toFixed(5) + ' ' + lon3.toFixed(5),
+      zIndex: 5,
+      map: map
+      });
+      marker11_listener = google.maps.event.addListener(marker11, 'dragend', function() {
+         var m11lat = marker11.getPosition().lat();
+         var m11lng = marker11.getPosition().lng();
+         marker11.setTitle(m11lat.toFixed(5) + '  ' + m11lng.toFixed(5));
+      });
+   };
+};
+
+google.maps.event.addDomListener(window, 'load', initscript);
+
+</script>
+</head>
+
+<body>
+<form name="form1" style="position:absolute; left:0px; top:1px; padding-bottom:1px; z-index:100000; white-space:nowrap; overflow:auto; width:100%; font-size:11px; color:#ffffff; background-color:#404080;" method="post">
+Lat:&nbsp;<input id=homelat type="text" size="8" value="39.83333">
+&nbsp;Lon:&nbsp;<input id=homelon type="text" size="9" value="-98.58333">
+<input type="button" value="<<Set Home" onclick="setLatLon();">
+&nbsp;<input id=dateGMT type="text" size="25">
+<input id=dateSRSS type="text" size="23">
+<input type="button" value="Update" onclick="update();">
+<input type="button" value="Home" onclick="goHome();">
+<input type="button" value="Track" onclick="showTrack(1);">
+<input type="button" value="O" onclick="showTrack(2);">
+<input type="button" value="Clear" onclick="clearTrack();">
+<input type="button" value="z2" onclick="zoomOut();">
+<input type="button" value="z13" onclick="zoomIn();">
+&nbsp;<input type="checkbox" id="auto" name="auto" unchecked>
+<label for="auto">AUTO UPDATE</label>
+&nbsp;&nbsp;<input type="button" value="M1" onclick="toggleM1();">
+<input type="button" value="M2" onclick="toggleM2();">
+</form>
+
+<form name="form2" style="position:absolute; left:32%; top:35px; padding-top:0px; padding-bottom:1px; z-index:100001; white-space:nowrap; font-size:11px; color:#ffffff; background-color:#7070b0;" method="post">
+&nbsp;<input type="checkbox" id="accept" name="accept" unchecked onclick="altTimeCheckboxClicked();">
+<label for="accept">ALT DATE+TIME</label>
+&nbsp;&nbsp;<input type="date" id="cDate" name="cDate" oninput="checkAltDate();"> 
+&nbsp;<input type="range" id="cTime2" name="cTime2" min="0" max="1439" step="1" oninput="sliderAltTime();">
+&nbsp;<input type="text" id="clock" name="clock" size="5">
+<input type="button" value="+" onclick="addOne();">
+<input type="button" value="-" onclick="subOne();">
+&nbsp;&nbsp;ALL TIMES UTC&nbsp;&nbsp;
+</form>
+
+<div id="map_canvas"></div>
+<button onclick="window.open('https://mwcircle.org/', '_blank')" style="position: relative; left: 10px; top: 0px; z-index:99; color:#0000ff; text-decoration:underline; cursor:pointer;">Medium Wave Circle</button>
+</body>
+</html>
+
