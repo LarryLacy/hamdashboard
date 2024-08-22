@@ -28,7 +28,7 @@ const aURL = [
   [
     "2196F3",
     "US WEATHER",
-    "https://openweathermap.org/weathermap?basemap=map&cities=true&layer=temperature&lat=42.0000&lon=-95.0000&zoom=5&temp=Fahrenheit",
+    "https://openweathermap.org/weathermap?basemap=map&cities=true&layer=temperature&lat=42.0000&lon=-95.0000&zoom=5&units=imperial",
     "1",
     "R",
   ],
