@@ -1,4 +1,4 @@
-const topBarCenterText = `VA3HDL - FN04ga`;
+const topBarCenterText = `WROJ207 - DN81dt`;
 // Menu items
 // Structure is as follows HTML Color code, Option, target URL, scaling 1=Original Size, side (optional, nothing is Left, "R" is Right)
 // The values are [color code, menu text, target link, scale factor, side],
@@ -58,7 +58,7 @@ const aIMG = [
   ["RADAR", "https://radar.weather.gov/ridge/standard/CONUS_loop.gif"],
   [
     "LOCAL RADAR",
-    "https://radar.weather.gov/ridge/standard/KNQA_loop.gif",
+    "https://radar.weather.gov/ridge/standard/KCYS_loop.gif",
   ],
   [
     "NOAA D-RAP",
@@ -71,11 +71,12 @@ const aIMG = [
   ],
   [
     "SATELLITE CAN",
+    //"https://cdn.star.nesdis.noaa.gov/GOES16/GLM/SECTOR/can/EXTENT3/GOES16-CAN-EXTENT3-1125x560.gif",
     "https://cdn.star.nesdis.noaa.gov/GOES16/GLM/SECTOR/can/EXTENT3/GOES16-CAN-EXTENT3-1125x560.gif",
   ],
   [
-    "SATELLITE CGL",
-    "https://cdn.star.nesdis.noaa.gov/GOES16/GLM/SECTOR/cgl/EXTENT3/GOES16-CGL-EXTENT3-600x600.gif",
+    "LOCAL SATELLITE",
+    "https://cdn.star.nesdis.noaa.gov/GOES16/ABI/SECTOR/nr/GEOCOLOR/GOES16-NR-GEOCOLOR-600x600.gif",
   ],
   [
     "LIGHTNING",
@@ -83,14 +84,17 @@ const aIMG = [
   ],
   [
     "LIGHTNING LOCAL",
-    "https://www.blitzortung.org/en/Images/image_b_ny.png",
+    "https://www.blitzortung.org/en/Images/image_b_mn.png",
   ],
+//  ["GREY LINE", "https://dx.qsl.net/images/greyline-4961.jpg"],
   ["GREY LINE", "https://www.timeanddate.com/scripts/sunmap.php?iso=now"],
+  ["10M/HF PROPAGATION",
+  "https://www.tvcomm.co.uk/g7izu/Autosave/NA_ES_AutoSave.JPG",
+  "https://www.tvcomm.co.uk/g7izu/Autosave/ATL_HF10_AutoSave.JPG"],
   [
     "SW BROADCAST",
-    "https://www.short-wave.info/php/transmitter-site-map.php?mobile=false&lat=52.67|-21.96|-15.53|-9.42|-17.76|-17.53|46.34|50.73|42.81|39.75|50.89|29.60|6.23|39.40|-15.53|43.51|46.34|-21.96|34.38|44.15|39.36|46.34|39.91|39.91|46.34|27.46|24.88|27.46|36.28|39.36|42.04|36.28|36.21|12.69|18.22|24.17|42.04|29.60|-15.73|-7.90|36.21|12.69|36.21|29.15|30.65|-21.96|33.50|-38.83|36.28|36.21|27.46&lon=9.75|27.60|28.00|160.05|168.36|146.05|-67.83|4.39|23.19|116.81|-113.85|55.79|-10.70|32.86|28.00|-79.63|-67.83|27.64|108.61|86.90|75.72|-67.83|-76.58|-76.58|-67.83|-80.93|102.50|-80.93|-86.10|75.72|12.32|-86.10|-86.89|-8.02|-63.02|54.25|12.32|55.79|46.45|-14.38|-86.89|-8.02|-86.89|47.77|-87.09|27.64|-86.47|176.42|-86.10|-86.89|-80.93&freq=3975|4930|4965|5020|5040|5055|5130|5780|5900|5985|6030|6040|6050|6050|6065|6070|6160|6195|7285|7295|7415|7490|9265|9265|9330|9395|9440|9455|9475|9600|9705|9930|9980|11640|11775|11810|11870|11880|11965|12095|12160|13630|13845|15540|15555|15580|15610|15720|15810|15825|17790&az=ND|20|ND|ND|ND|ND|245|ND|126|257|ND|313|ND|310|315|ND|245|350|317|270|308|245|242|242|245|355|283|285|50|308|206|180|90|111|320|90|210|211|295|27|85|111|90|310|5|350|85|35|40|46|160",
+    "http://www.short-wave.info/php/transmitter-site-map.php?mobile=false&lat=24.01|36.21|27.46|35.62|-17.53|46.34|50.73|27.46|36.21|39.75|52.65|50.48|50.89|52.65|43.51|52.67|46.34|59.75|36.21|29.84|27.46|27.46|46.34|27.46|27.46|39.36|33.50|39.36|24.88|39.75|-38.83|24.88|24.88|59.75|21.14|36.28|13.28|44.15|24.88|18.22|24.88|21.14|36.21|40.41|21.93|13.28|13.23|34.38|44.15|39.36|39.91|36.21|36.21|39.36|39.40|21.93&lon=90.26|-86.89|-80.93|-86.01|146.05|-67.83|4.39|-80.93|-86.89|116.81|12.91|6.52|-113.85|12.91|-79.63|9.75|-67.83|-151.74|-86.89|-90.12|-80.93|-80.93|-67.83|-80.93|-80.93|75.72|-86.47|75.72|102.49|116.81|176.42|102.49|102.50|-151.74|105.42|-86.10|144.67|86.90|102.50|-63.02|102.49|105.42|-86.89|45.19|59.63|144.67|77.22|108.61|86.90|75.72|-76.58|-86.89|-86.89|75.72|32.86|59.63&freq=4750|4840|5010|5050|5055|5130|5780|5850|5935|5955|5990|6005|6030|6045|6070|6160|6160|7355|7490|7505|7570|7730|9330|9395|9455|9460|9470|9500|9600|9645|9700|9730|9760|9795|9840|9940|11590|11650|11760|11775|11980|12020|13845|15205|15295|15400|15410|15555|15590|15660|15720|15825|15825|17490|17620|17790&az=320|40|181|45|ND|245|ND|315|85|95|233|10|ND|240|ND|ND|245|270|85|20|315|44|245|355|285|174|335|209|163|215|325|225|135|270|177|40|285|212|135|320|177|177|90|305|10|290|60|292|308|173|62|46|46|308|310|80",
   ],
-  ["10M PROPAGATION", "https://www.tvcomm.co.uk/g7izu/Autosave/NA_ES_AutoSave.JPG"],
   ["HF PROPAGATION",
   "https://www.hamqsl.com/solar101vhf.php",
   "https://www.hamqsl.com/solar100sc.php",
