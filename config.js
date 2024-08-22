@@ -17,7 +17,7 @@ const aURL = [
   ],
   ["2196F3", "DX CLUSTER", "https://dxcluster.ha8tks.hu/map/", "1"],
   ["2196F3", "PISTAR", "http://pi-star.local/", "1.2"],
-  ["2196F3", "TIME.IS", "https://time.is/", "1", "R"],
+  ["2196F3", "TIME", "https://time.is/", "1", "R"],
   [
     "2196F3",
     "CHY WEATHER",
