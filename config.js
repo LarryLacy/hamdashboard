@@ -69,7 +69,7 @@ const aIMG = [
 //  ["GREY LINE", "https://www.dxfuncluster.com/grayline/"],
 //  ["GREY LINE", "https://www.timeanddate.com/scripts/sunmap.php?iso=now"],
   [
-    "SATELLITE NORTHERN US AND CAN",
+    "SATELLITE CANADA AND US",
     //"https://cdn.star.nesdis.noaa.gov/GOES16/GLM/SECTOR/can/EXTENT3/GOES16-CAN-EXTENT3-1125x560.gif",
     "https://cdn.star.nesdis.noaa.gov/GOES16/GLM/SECTOR/can/EXTENT3/GOES16-CAN-EXTENT3-1125x560.gif",
   ],
