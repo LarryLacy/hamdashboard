@@ -83,7 +83,7 @@ const aIMG = [
     "https://www.heavens-above.com/orbitdisplay.aspx?icon=iss&width=600&height=300&mode=M&satid=25544",
     "https://www.heavens-above.com/orbitdisplay.aspx?icon=default&width=600&height=300&mode=M&satid=44909",
   ],
-  ["10M/HF PROPAGATION",
+  ["HF UTILIZATION",
   "https://www.tvcomm.co.uk/g7izu/Autosave/NA_ES_AutoSave.JPG",
   "https://www.tvcomm.co.uk/g7izu/Autosave/ATL_HF10_AutoSave.JPG"],
   [
