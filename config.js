@@ -123,7 +123,6 @@ const aIMG = [
     "https://img.propagation.dr2w.de/n-america/20M/dr2w_animation_20M.gif",
     "https://img.propagation.dr2w.de/n-america/30M/dr2w_animation_30M.gif",
     "https://img.propagation.dr2w.de/n-america/40M/dr2w_animation_40M.gif",
-    "https://img.propagation.dr2w.de/n-america/60M/dr2w_animation_60M.gif",
     "https://img.propagation.dr2w.de/n-america/80M/dr2w_animation_80M.gif",
   ]
 ];
