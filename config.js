@@ -26,15 +26,15 @@ const aURL = [
   ["2196F3", "PISTAR", "http://pi-star.local/", "1.2"],
   [
     "2196F3",
-    "RADAR",
-    "https://weather.gc.ca/?layers=alert,radar&center=43.39961001,-78.53212031&zoom=6&alertTableFilterProv=ON",
+    "WEATHER",
+    "https://forecast.weather.gov/MapClick.php?lat=41.8101&lon=-103.6692",
     "1",
     "R"
   ],
   ["2196F3", "TIME.IS", "https://time.is/", "1", "R"],
   [
     "2196F3",
-    "WEATHER",
+    "US TEMPERATURES",
     "https://openweathermap.org/weathermap?basemap=map&cities=true&layer=temperature&lat=44.0157&lon=-79.4591&zoom=5",
     "1",
     "R",
@@ -42,7 +42,7 @@ const aURL = [
   [
     "2196F3",
     "WINDS",
-    "https://earth.nullschool.net/#current/wind/surface/level/orthographic=-78.79,44.09,3000",
+    "https://earth.nullschool.net/#current/wind/surface/level/orthographic=-95.00,40.00,3000",
     "1",
     "R",
   ],
