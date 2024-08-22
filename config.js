@@ -27,7 +27,7 @@ const aURL = [
   ],
   [
     "2196F3",
-    "US WEATHER",
+    "US TENPS",
     "https://openweathermap.org/weathermap?basemap=map&cities=true&layer=temperature&lat=44.0157&lon=-79.4591&zoom=5",
     "1",
     "R",
