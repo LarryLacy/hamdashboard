@@ -98,7 +98,7 @@ const aIMG = [
     "https://images.lightningmaps.org/blitzortung/america/index.php?animation=usa",
   ],
   [
-    "LIGHTNING LOCAL",
+    "LOCAL LIGHTNING",
     "https://www.blitzortung.org/en/Images/image_b_mn.png",
   ],
   [
