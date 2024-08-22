@@ -26,7 +26,7 @@ const aURL = [
   ["2196F3", "PISTAR", "http://pi-star.local/", "1.2"],
   [
     "2196F3",
-    "WEATHER",
+    "LOCAL WEATHER",
     "https://forecast.weather.gov/MapClick.php?lat=41.8101&lon=-103.6692",
     "1",
     "R"
@@ -34,7 +34,7 @@ const aURL = [
   ["2196F3", "TIME.IS", "https://time.is/", "1", "R"],
   [
     "2196F3",
-    "US TEMPERATURES",
+    "US WEATHER",
     "https://openweathermap.org/weathermap?basemap=map&cities=true&layer=temperature&lat=44.0157&lon=-79.4591&zoom=5",
     "1",
     "R",
