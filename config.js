@@ -29,7 +29,6 @@ const aURL = [
     "2196F3",
     "US WEATHER",
     "https://openweathermap.org/weathermap?basemap=map&cities=true&layer=temperature&lat=42.0000&lon=-95.0000&zoom=5&units=imperial",
-//    "https://api.openweathermap.org/data/3.0/onecall?basemap=map&cities=true&layer=temperature&lat=42.0000&lon=-95.0000&zoom=5&units=imperial&appid=3bbbd0620b0f70417b90381ec981cf03",
     "1",
     "R",
   ],
