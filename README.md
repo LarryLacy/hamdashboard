@@ -1,20 +1,97 @@
-[YouTube - Presentation video](https://www.youtube.com/watch?v=sIdqMQTGNSc)
+Original VA3HDL [YouTube - Presentation video](https://www.youtube.com/watch?v=sIdqMQTGNSc)
 
-### Live Dashboards:
+VA3HDL en español [YouTube - Video en español](https://www.youtube.com/watch?v=IBMxELofKVA)
 
-[Hamdash Demo](https://va3hdl.github.io/hamdash/)  -- Test it before download
+[Hamdash Demo](https://va3hdl.github.io/hamdash/)  -- Test it here before download
 
-[BCAT N4TDX](https://www.n4tdx.org/dashboard/dashboard.html)  -- User submitted live dashboard by Steve N5NG, in use by the Brevard County (Florida) ARES Team!!!
+### User submitted live Dashboards:
 
-[FFX DEMS](https://kq4dne.github.io/WeatherDash/WeatherDash.html)  -- User submitted live dashboard by Sandy KQ4DNE for Emergency Management Weather
+[BCAT N4TDX](https://qsl.net/n/n5ng/BCAT/)  -- by Steve N5NG, in use by the Brevard County (Florida) ARES Team
 
-[FFX ARES](https://kq4dne.github.io/hamdash/hamdash.html)  -- User submitted live dashboard by Sandy KQ4DNE for ARES
+* Links for Steve's weather and hamradio config.js as .txt files:
+  * https://qsl.net/n5ng/config.txt
+  * https://qsl.net/n5ng/HAM/config.txt
 
-### Instructions:
+[FFX DEMS](https://kq4dne.github.io/WeatherDash/WeatherDash.html)  -- by Sandy KQ4DNE for Emergency Management Weather
+
+[FFX ARES](https://kq4dne.github.io/hamdash/hamdash.html)  -- by Sandy KQ4DNE for ARES
+
+[WA4MED](https://dashboard.wa4med.us/hamdash.html)  -- by Matthew WA4MED
+
+[PY3TX](https://dashboard.py3tx.com/) -- South America
+
+[VE7CAS](https://hamradio.smecher.bc.ca/) -- Vancouver, BC
+
+[OK1SLM](https://www.qsl.net/ok1slm/) -- Prague, EU
+
+[VICSCAN](https://www.vicscan.com/hamdash/) -- Melbourne, Australia by @vk3ymml
+
+[K6BCW](https://elihickox.com/radio/hamdashboard/hamdash.html) -- San Francisco bay area
+
+[KN6PTQ](https://kn6ptq.com/) -- San Francisco Bay Area
+
+[W2SZ](https://dashboard.w2sz.org/)  -- NE US by Brian W2SZ
+
+[N2YQT](https://dashboard.tourge.net/)  -- NE US by Ryan N2YQT
+
+[KC2VWR](https://baef57ae.ham-desktop.pages.dev/) -- NE US
+
+[KD2YFY](https://dash.kd2yfy.net/) -- NE US
+
+[KD4VRD](https://hamdashboard-8fn.pages.dev/) -- North Carolina
+
+[KD5PQJ](https://kd5pqj.com/dash/index.html) -- Texas
+
+[N5GAH](http://n5gah.com/) -- Texas
+
+[KJ7YYI](https://kj7yyi.net/ham-dash/) -- Arizona
+
+[NQ0M](https://hamdash.nq0m.com/#) -- Kansas
+
+[W3RDW](https://dashboard.w3rdw.radio/) -- Ohio
+
+[W4QAL](https://w4qal.net/dashboard/index.html) -- SE US - West Florida
+
+### Quick Setup Instructions:
 1. Just download the files from the Github repository (hamdash.html, config.js, and wheelzoom.js) and keep them together on the same folder.
-2. Open hamdash.html with any browser of your preference and you done.
-3. With any text editor (like Notepad) you can change the source images (can be more than one per box) or the menu options from the config.js file.
+2. Open hamdash.html with any browser of your preference.
+3. Use the right menu "Setup" option to load the settings page to configure your dashboard.
+4. Alternatively with any text editor (like Notepad) you can change the source images (can be more than one per box) or the menu options from the config.js file.
+5. Select to load your configuration from browser's Local Storage or config.js file, and save the settings.
+6. For server based hosted installs is recommended to use the settings stored in the config.js file. (More details below)
 
+#### Settings Buttons
+<img src="https://github.com/VA3HDL/hamdashboard/blob/main/examples/settings_buttons.png?raw=true" width="800">
+
+##### Save Settings to Local Storage:
+Save the settings on the page to the Local Storage of the current browser in use
+
+##### Reset to Defaults:
+Reset all settings' values to sample default values for testing
+
+##### Backup Settings to JSON file:
+Save all settings values to a JSON file that can be downloaded and imported on a different browser or installation
+
+##### Restore Settings from JSON file:
+Load all settings values from a JSON file saved with the previous button
+
+##### Import from config.js file:
+Load all settings values from a config.js file format (config.js file is the recommended format for server installations)
+
+##### Export to config.js file:
+Save all settings values to a config.js file format (config.js file is the recommended format for server installations)
+
+#### Public facing dashboards:
+
+The "Setup" link from the right hand side menu do no have any possibility to make changes to the config.js file hosted on the server or even hosted locally.
+If someone using a public dashboard access the "Setup" settings page and change it to Local Storage, will be affecting only him/herself specifically as the Local Storage refer to that user's browser in particular.
+Is perfectly safe and no harm can be done.
+
+However, I have added for users that have public access dashboards, a new option on the config.js file that removes the "Setup" option from the menu.
+
+        const disableSetup = true;
+
+### YouTube coverage:
 [YouTube - Configuration instructions contributed by Jason KM4ACK](https://youtu.be/9ZZXg60tN-o)
 
 [YouTube - Raspberry Pi instructions contributed by Andreas M0FXB](https://www.youtube.com/watch?v=Km_vOCvCMFM)
@@ -28,6 +105,9 @@
 [YouTube - French review and instructions by Jean-Benard F5SVP](https://www.youtube.com/watch?v=o9Dl9A5hqQI)
 
 [YouTube - Repaso e instrucciones en Español con Jose EA8EE](https://www.youtube.com/watch?v=3CnsfB3zNuM)
+
+### Docker:
+[Docker version](https://registry.hub.docker.com/r/michaelsteven/hamdashboard)  -- by Michael Stevens
 
 ### Quick Help:
 * Double click on an image to expand to full screen.
@@ -69,11 +149,110 @@ There is very little that can be done on the client side if the source site does
 
 As a workaround for these issues, I've tested running a local proxy on my computer to strip out the x-frame-options header coming from the source server and it worked well on some cases. But setting up a proxy adds another layer of complexity to the setup.
 
+Use this online tool to test any URL to see if it can be displayed in an iframe before adding it to the dashboard -> [iFrame Tester online](https://iframetester.com/)
+
 ## Updates
 
-If you want to upgrade to the latest version, the only file you need to update is hamdash.html (do not overwrite your config.js file.)
+If you want to upgrade to the latest version, please make sure your read the Changelog below (do not overwrite your config.js file.)
 
-Check updated demo!
+Check the updated demos too!
+
+### 2025.01.26 Changelog:
+
+- Fixed a bug with the "Export to config.js file" button that was saving the "default" values instead of saving the current settings displayed on the page.
+- Thanks to Dave WB5NHL for reporting this issue to me.
+
+### 2025.01.24 Changelog:
+
+- Merged the settings.html page into the main hamdash.html page for maintenance and upgrade simplification
+- Added a color picker for the menu items background
+- Replaced all CONST declarations on the config.js file with VAR declarations to allow these variables to be changed in realtime via Setup page
+- Fixed issue with Back menu option that refreshed the entire page
+- Unloaded the page iFrame when is not visible (these are the pages loaded by the side menu options)
+
+#### Upgrade notes:
+
+Delete the file settings.html if you have one. This file is no longer needed. Settings are now part of hamdash.html file.
+Exporting the configuration to JSON file is strongly recommended if you are using Browser Local Storage to save your configuration as a backup.
+
+
+### 2025.01.21 Changelog:
+
+- Added ability to export settings to config.js file
+- Bug fix: Delete button for Menu items don't work
+- Moved Setup Page buttons to the top and made them always visible for easy access
+- Added tooltips to the Setup Page (settings.html)
+
+### 2025.01.20 Changelog:
+
+- Added a "Setup" page to configure the dashboard directly from the browser
+- Added the "Setup" option to the menu to loads the settings page
+- Ability to choose the option to load the configuration from: config.js file or Local Storage
+- Use config.js as default if present for backwards compatibility
+- Ability to import existing config.js file into Local Storage
+- Ability to export settings from Local Storage to backup Json file
+- Ability to import settings from backup Json file into Local Storage
+- Ability to hide the "Setup" option from the menu by adding "const disableSetup = true;" on the config.js file
+
+#### Upgrade notes:
+
+Remove these lines from your config.js file to avoid duplicated menu entries (these entries are now hardcoded)
+
+        ["add10d", "BACK", "#", "1"],
+        ["add10d", "BACK", "#", "1", "R"],
+        ["ff9100", "Refresh", "#", "1"],
+        ["0dd1a7", "Help", "#", "1"],
+
+Make sure you also download (in addition to hamdash.html) the new file settings.html that provides the new setup page option
+
+#### Upgrade notes for public facing dashboards:
+
+The "Setup" link from the right hand side menu do no have any possibility to make changes to the config.js file hosted on the server or even hosted locally.
+If someone using a public dashboard access the "Setup" settings page and change it to Local Storage, will be affecting only him/herself specifically as the Local Storage refer to that user's browser in particular.
+Is perfectly safe and no harm can be done.
+
+However, I have added for users that have public access dashboards, a new option on the config.js file that removes the "Setup" option from the menu.
+
+        const disableSetup = true;
+
+Add the above line to the config.js and rename the settings.html page to anything that you only know and is hard to guess.
+
+#### New Settings page sample:
+
+<img src="https://github.com/VA3HDL/hamdashboard/blob/main/examples/settings.png?raw=true" width="800">
+
+### 2024.11.13 Changelog:
+
+- Added capability to customize the grid size (any combination of number of columns and number of rows for the dashboard tiles.) See examples and usage below.
+- Usage: Add these lines to your config.js file and replace "4" and "3" with the number of columns and rows that you desire
+
+        // Grid layout
+        var layout_cols = 4;
+        var layout_rows = 3;
+- Ensure the total number of tiles match your sources and your rotation/refresh delays specified in the config.js file
+- Removed "VA3HDL" from the page title.
+- Grid size examples:
+
+--> 2x2:
+
+<img src="https://github.com/VA3HDL/hamdashboard/blob/main/examples/2x2.png?raw=true" width="200">
+
+--> 3x3:
+
+<img src="https://github.com/VA3HDL/hamdashboard/blob/main/examples/3x3.png?raw=true" width="200">
+
+--> 4x4:
+
+<img src="https://github.com/VA3HDL/hamdashboard/blob/main/examples/4x4.png?raw=true" width="200">
+
+--> 5x3:
+
+<img src="https://github.com/VA3HDL/hamdashboard/blob/main/examples/5x3.png?raw=true" width="200">
+
+
+### 2024.10.16 Changelog:
+
+- Added website capability to tiles using "iframe|" keyword before the tile URL. Check the updated config.js file for usage examples. The tiles can contain any website that supports embedding using iFrame, including live YouTube videos!
 
 ### 2024.07.24 Changelog:
 

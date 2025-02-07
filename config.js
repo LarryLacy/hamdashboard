@@ -1,13 +1,15 @@
 const topBarCenterText = `WROJ207 - DN81dt`;
+const disableSetup = false;
+
+// Grid layout
+var layout_cols = 4;
+var layout_rows = 3;
+
 // Menu items
 // Structure is as follows HTML Color code, Option, target URL, scaling 1=Original Size, side (optional, nothing is Left, "R" is Right)
 // The values are [color code, menu text, target link, scale factor, side],
 // add new lines following the structure for extra menu options. The comma at the end is important!
-const aURL = [
-  ["add10d", "BACK", "#", "1"],
-  ["add10d", "BACK", "#", "1", "R"],
-  ["ff9100", "Refresh", "#", "1"],
-  ["0dd1a7", "Help", "#", "1"],
+var aURL = [
   ["2196F3", "CLUBLOG", "https://clublog.org/livestream/VA3HDL", "1.7"],
   [
     "2196F3",
@@ -54,10 +56,8 @@ const aURL = [
 // the comma at the end is important!
 // You can't add more items because there are only 12 placeholders on the dashboard
 // but you can replace the titles and the images with anything you want.
-const aIMG = [
-  [
-    "RADAR",
-    "https://radar.weather.gov/ridge/standard/CONUS_loop.gif"],
+var aIMG = [
+  ["RADAR", "https://radar.weather.gov/ridge/standard/CONUS_loop.gif"],
   [
     "LOCAL RADAR",
     "https://radar.weather.gov/ridge/standard/KCYS_loop.gif",
@@ -86,7 +86,6 @@ const aIMG = [
   [
     "ISS & RS-44 POSITION",
     "https://www.heavens-above.com/orbitdisplay.aspx?icon=iss&width=600&height=300&mode=M&satid=25544",
-    "https://www.heavens-above.com/orbitdisplay.aspx?icon=default&width=600&height=300&mode=M&satid=44909",
   ],
   [
     "HF UTILIZATION",
@@ -129,6 +128,4 @@ const aIMG = [
 
 // Image rotation intervals in milliseconds per tile - If the line below is commented, all tiles will be rotated every 30000 milliseconds (30s)
 const tileDelay = [10000,10000,10000,10000,10000,10000,10000,10000,10000,10000,10000,10000];
-
-
 
